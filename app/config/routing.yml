@@ -1,3 +1,7 @@
+insset_blog:
+    resource: "@INSSETBlogBundle/Resources/config/routing.yml"
+    prefix:   /
+
 app:
     resource: '@AppBundle/Controller/'
     type: annotation

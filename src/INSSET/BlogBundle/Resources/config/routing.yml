@@ -1,0 +1,3 @@
+insset_blog_homepage:
+    path:     /
+    defaults: { _controller: INSSETBlogBundle:Default:index }

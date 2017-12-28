@@ -1,0 +1,4 @@
+services:
+#    insset_blog.example:
+#        class: INSSET\BlogBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]
