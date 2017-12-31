@@ -1,0 +1,90 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: mattisbeguin
+ * Date: 29/12/2017
+ * Time: 14:33
+ */
+
+namespace INSSET\BlogBundle\Controller\Front;
+
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use INSSET\BlogBundle\Entity\Comment;
+use INSSET\BlogBundle\Entity\Article;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+
+class DefaultController extends Controller
+{
+    public function indexAction($id, Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $articleNumber = $em->getRepository('INSSETBlogBundle:Article')->getNumberEntities();
+
+        if ($articleNumber > 0){
+            if ($id == 0){
+                $article = $em->getRepository('INSSETBlogBundle:Article')->findOneBy(array('published' => false), array('id' => 'DESC'));
+            }
+
+            else{
+                $article = $em->getRepository('INSSETBlogBundle:Article')->findOneBy(array('id' => $id, 'published' => false));
+            }
+
+            if ($article === null){
+                throw new NotFoundHttpException('L\'article d\'id ' . $id . ' n\'a pas été publié ou il n\' existe pas.');
+            }
+
+            $comments = $em->getRepository('INSSETBlogBundle:Comment')->findBy(array('article' => $article->getId()), array('id' => 'DESC'));
+
+            $articlesTitles = $em->getRepository('INSSETBlogBundle:Article')->findAllOthersTitles($article->getId());
+        }
+
+        else{
+            if ($id == 0){
+                $article = null;
+                $comments = null;
+                $articlesTitles = null;
+            }
+
+            else{
+                throw new NotFoundHttpException('L\'article d\'id ' . $id . ' n\'a pas été publié ou il n\' existe pas.');
+            }
+        }
+
+
+        $comment = new Comment();
+
+        $form = $this->get('form.factory')->createBuilder(FormType::class, $comment)
+            ->add('text',   TextareaType::class)
+            ->add('article', EntityType::class, array(
+                'class'        => 'INSSETBlogBundle:Article',
+                'choice_label' => 'id',
+                'multiple'     => false,
+            ))
+
+            ->add('save',SubmitType::class)
+            ->getForm();
+        ;
+
+        if ($request->isMethod('POST')) {
+            $form->handleRequest($request);
+            if ($form->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($comment);
+                $em->flush();
+
+                // return new Response($request->headers->get('referer'));
+
+                return $this->redirectToRoute('insset_blog_front_default_index');
+            }
+        }
+
+
+        return $this->render('INSSETBlogBundle:Front/Default:index.html.twig', array('article'  => $article, 'articlesTitles' => $articlesTitles, 'comments' => $comments, 'form' => $form->createView()));
+    }
+}

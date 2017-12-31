@@ -1,3 +1,7 @@
-insset_blog_homepage:
-    path:     /
-    defaults: { _controller: INSSETBlogBundle:Default:index }
+insset_blog_front_default_index:
+    path: /{id}
+    defaults:
+        _controller: INSSETBlogBundle:Front\Default:index
+        id: 0
+    requirements:
+        id: \d*

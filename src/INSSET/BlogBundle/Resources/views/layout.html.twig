@@ -1,0 +1,36 @@
+{% extends '::layout.html.twig' %}
+
+{% block page_title %}{{ parent() }} - Blog en Symfony{% endblock %}
+
+{% block styles %}
+    {{ parent() }}
+
+    .jumbotron
+    {
+        color: #FFFFFF;
+        background-color: #2980b9;
+    }
+
+    footer
+    {
+        background-color: #2c3e50;
+    }
+
+    footer p
+    {
+        color: #FFFFFF;
+    }
+{% endblock %}
+
+{% block header_title %}{{ parent() }} - Blog en Symfony{% endblock %}
+
+{% block section_article_aside %}
+    {% block aside_left %}
+    {% endblock %}
+
+    {% block section %}
+    {% endblock %}
+
+    {% block aside_right %}
+    {% endblock %}
+{% endblock %}

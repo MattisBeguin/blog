@@ -1,0 +1,112 @@
+{% extends 'INSSETBlogBundle::layout.html.twig' %}
+
+{% block page_title %}{{ parent() }} - Index {% endblock %}
+
+{% block styles %}
+    {{ parent() }}
+
+    #article
+    {
+        background-color: #bdc3c7;
+        border-radius: 15px;
+    }
+
+    #article > #article_title
+    {
+        padding-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    #article > #article_body
+    {
+        margin-left: 15px;
+        margin-top: 15px;
+        margin-right: 15px;
+        margin-bottom: 15px;
+    }
+
+    #article > #article_date
+    {
+        padding-right: 15px;
+        padding-bottom: 15px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+
+    #comments > .comment
+    {
+        margin-top: 15px;
+        margin-bottom: 15px;
+        border-radius: 15px;
+        background-color: #ecf0f1;
+    }
+
+    .comment > .comment_text
+    {
+        padding-top: 15px;
+        padding-right: 15px;
+        padding-bottom: 15px;
+        padding-left: 15px;
+        margin-bottom: 0px;
+    }
+
+    .comment > .comment_date
+    {
+        padding-right: 15px;
+        padding-bottom: 15px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+
+    #article, #comments
+    {
+        width: 75%;
+        margin: auto;
+    }
+
+    aside > p > a
+    {
+        text-decoration: none;
+    }
+
+{% endblock %}
+
+{% block section %}
+    <section class="col-xs-8 col-sm-8 col-md-10 col-lg-10">
+        <h2 class="text-center">Dernier article</h2>
+        <article id="article">
+            {% if article is not null %}
+                <h3 id="article_title" class="text-center">{{ article.title }}</h3>
+                <p id="article_body">{{ article.body }}</p>
+                <p id="article_date" class="text-right"r>écrit à {{ article.date|date('H:i:s \\l\\e d-m-Y') }}</p>
+            {% else %}
+                <p id="article_body">Il n'y a pas encore d'article...</p>
+            {% endif %}
+        </article>
+        <h2 class="text-center">Liste des commentaires</h2>
+        <article id="comments">
+            {% for comment in comments %}
+                <div class="comment">
+                    <p class="comment_text">{{ comment.text }}</p>
+                    <p class="text-right comment_date">écrit à {{ comment.date|date('H:i:s \\l\\e d-m-Y') }}</p>
+                </div>
+            {% else %}
+                <div class="comment">
+                    <p class="comment_text">Il n'y a pas encore de commentaire...</p>
+                </div>
+            {% endfor %}
+        </article>
+        <h2 class="text-center">Écrire un commentaire</h2>
+        {{ form(form) }}
+    </section>
+{% endblock %}
+{% block aside_right %}
+    <div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
+        <h2>Liste des articles</h2>
+        {% for articleTitle in articlesTitles %}
+            <aside class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><p><a href="{{ path('insset_blog_front_default_index', { 'id': articleTitle.id }) }}">{{ articleTitle.title }}</a></p></aside>
+        {% else %}
+            <aside class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><p>Il n'y a pas d'autre article...</p></aside>
+        {% endfor %}
+    </div>
+{% endblock %}
