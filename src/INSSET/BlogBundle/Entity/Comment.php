@@ -3,6 +3,7 @@
 namespace INSSET\BlogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Comment
@@ -25,6 +26,8 @@ class Comment
      * @var string
      *
      * @ORM\Column(name="text", type="text")
+     *
+     * @Assert\NotBlank(message="Le texte est obligatoire !!!")
      */
     private $text;
 
@@ -38,6 +41,10 @@ class Comment
     /**
      * @ORM\ManyToOne(targetEntity="INSSET\BlogBundle\Entity\Article", inversedBy="comments")
      * @ORM\JoinColumn(name="article_id", referencedColumnName="id", nullable=false)
+     *
+     * @Assert\NotNull(message="L'article est obligatoire !!!")
+     * @Assert\Type(type="INSSET\BlogBundle\Entity\Article")
+     * @Assert\Valid()
      */
     private $article;
 
@@ -46,7 +53,7 @@ class Comment
      */
     public function __construct()
     {
-        $this->date = new \Datetime();
+        $this->date = new \Datetime('NOW');
     }
 
     /**

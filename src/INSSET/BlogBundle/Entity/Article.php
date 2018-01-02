@@ -4,6 +4,7 @@ namespace INSSET\BlogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Article
@@ -26,6 +27,9 @@ class Article
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255)
+     *
+     * @Assert\NotBlank(message="Le titre est obligatoire !!!")
+     * @Assert\Length(max="255", maxMessage="Le titre ne doit pas comprendre plus de {{ limit }} caractères !!!")
      */
     private $title;
 
@@ -33,6 +37,8 @@ class Article
      * @var string
      *
      * @ORM\Column(name="body", type="text")
+     *
+     * @Assert\NotBlank(message="Le corps est obligatoire !!!")
      */
     private $body;
 
@@ -46,7 +52,7 @@ class Article
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="date", type="datetime")
+     * @ORM\Column(name="date", type="datetime", nullable=true)
      */
     private $date;
 
@@ -61,7 +67,7 @@ class Article
     public function __construct()
     {
         $this->published = false;
-        $this->date = new \Datetime();
+        $this->date = null;
         $this->comments = new ArrayCollection();
     }
 
