@@ -29,10 +29,10 @@ class DefaultController extends Controller
 
             else{
                 $article = $em->getRepository('INSSETBlogBundle:Article')->findOneBy(array('id' => $id, 'published' => false));
+            }
 
-                if ($article === null){
-                    throw new NotFoundHttpException('L\'article d\'id ' . $id . ' n\'a pas été publié ou il n\' existe pas.');
-                }
+            if ($article === null){
+                throw new NotFoundHttpException('L\'article d\'id ' . $id . ' n\'a pas été publié ou il n\' existe pas.');
             }
 
             $comment = new Comment();
@@ -71,6 +71,6 @@ class DefaultController extends Controller
             }
         }
 
-        return $this->render('INSSETBlogBundle:Front/Default:index.html.twig', array('article'  => $article, 'comments' => $comments, 'form' => $form, 'articlesTitles' => $articlesTitles, ));
+        return $this->render('INSSETBlogBundle:Front/Default:index.html.twig', array('article'  => $article, 'comments' => $comments, 'form' => $form, 'articlesTitles' => $articlesTitles));
     }
 }
