@@ -1,7 +1,29 @@
 insset_blog_front_default_index:
-    path: /{id}
+    path: /{id}/
     defaults:
         _controller: INSSETBlogBundle:Front\Default:index
         id: 0
     requirements:
         id: \d*
+
+insset_blog_back_default_index:
+    path: /admin/
+    defaults:
+        _controller: INSSETBlogBundle:Back\Default:index
+
+insset_blog_back_comment_edit:
+    path: /comment/edit/
+    defaults:
+        _controller: INSSETBlogBundle:Back\Comment:edit
+    methods: [POST]
+
+insset_blog_back_comment_delete:
+    path: /comment/delete/
+    defaults:
+        _controller: INSSETBlogBundle:Back\Comment:delete
+    methods: [POST]
+
+insset_blog_back_article_add:
+    path: /admin/article/add
+    defaults:
+        _controller: INSSETBlogBundle:Back\Article:add

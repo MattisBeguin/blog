@@ -1,0 +1,153 @@
+{% extends 'INSSETBlogBundle:Back:layout.html.twig' %}
+
+{% block styles %}
+    {{ parent() }}
+
+    #comments
+    {
+        width: 75%;
+        margin: auto;
+    }
+
+    #comments > .comment
+    {
+        margin-top: 15px;
+        margin-bottom: 15px;
+        border-radius: 15px;
+        background-color: #ecf0f1;
+    }
+
+    .comment > .comment_text
+    {
+        padding-top: 15px;
+        padding-right: 15px;
+        padding-bottom: 7px;
+        padding-left: 15px;
+        margin-bottom: 0px;
+    }
+
+    .comment > .comment_date
+    {
+        max-width: 50%;
+        padding-right: 15px;
+        margin-top: 7px;
+        margin-bottom: 15px;
+        margin-left: 50%;
+    }
+
+    .comment button
+    {
+        width: 50%;
+    }
+
+    .comment .btn-primary
+    {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 15px;
+        border-top-left-radius: 0;
+    }
+
+    .comment .btn-danger
+    {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 15px;
+        border-bottom-left-radius: 0;
+        border-top-left-radius: 0;
+    }
+{% endblock %}
+
+{% block page_title %}{{ parent() }} - Index{% endblock %}
+
+{% block aside_left %}
+    <div class="col-xs-4 col-sm-4 col-md-3 col-lg-3">
+        <h2>Liste de mes articles publiés</h2>
+        {% for article in articles %}
+            <aside class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><p><a href="#">{{ article.title ~ ' : écrit à ' ~ article.date|date('H:i:s \\l\\e d/m/Y') }}</a></p></aside>
+        {% else %}
+            <aside class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><p>Il n'y a pas d'article publié...</p></aside>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block section %}
+    <section class="col-xs-8 col-sm-8 col-md-9 col-lg-9">
+        <h2 class="text-center">Liste des commentaires sur mes articles</h2>
+        <article id="comments">
+            {% for comment in comments %}
+                <div data-id="{{ comment.id }}" class="comment">
+                    <p contenteditable="true" class="comment_text">{{ comment.text }}</p>
+                    <p class="text-right comment_date">écrit sur l'article : {{ comment.article.title ~ ' à ' ~ comment.date|date('H:i:s \\l\\e d/m/Y') }}</p>
+                    <button type="button" class="btn btn-primary">Modifier</button><button type="button" class="btn btn-danger">Supprimer</button>
+                </div>
+            {% else %}
+                <div class="comment">
+                    <p class="comment_text">Il n'y a pas encore de commentaire...</p>
+                </div>
+            {% endfor %}
+        </article>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            var url;
+            var commentTag;
+            var id;
+            var text;
+
+            function ajaxCall(url, commentTag, id, text, successCallbackFunction){
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: {id: id, text: text},
+                    cache: false,
+                    success: function(response){
+                        response = jQuery.parseJSON(response);
+
+                        if(response.status === 'Okay'){
+                            successCallbackFunction(commentTag, response);
+                        }
+
+                        else{
+                            console.error('Erreur !!!');
+                        }
+                    },
+                    error: function(request){
+                        console.error('Erreur : ' + request.responseText);
+                    }
+                })
+            }
+
+            function updateCommentTag(commentTag, response){
+                commentTag.children('.comment_text').text(response.data);
+                commentTag.children('.btn-primary').blur();
+            }
+
+            function deleteCommentTag(commentTag, response){
+                commentTag.remove();
+            }
+
+            $('button').click(function(){
+                commentTag = $(this).closest('div');
+                id = commentTag.data('id');
+
+                if($(this).hasClass('btn-primary')){
+                    url = "{{ path('insset_blog_back_comment_edit') }}";
+                    text = commentTag.children('.comment_text').text();
+                    ajaxCall(url, commentTag, id, text, updateCommentTag);
+                }
+
+                else if($(this).hasClass('btn-danger')){
+                    url = "{{ path('insset_blog_back_comment_delete') }}";
+                    text = null;
+                    ajaxCall(url, commentTag, id, text, deleteCommentTag);
+                }
+            });
+        });
+    </script>
+{% endblock %}

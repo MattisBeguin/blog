@@ -3,8 +3,8 @@
 namespace INSSET\BlogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Article
@@ -60,6 +60,16 @@ class Article
      * @ORM\OneToMany(targetEntity="INSSET\BlogBundle\Entity\Comment", mappedBy="article")
      */
     private $comments;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="INSSET\BlogBundle\Entity\Blogger", inversedBy="articles")
+     * @ORM\JoinColumn(name="blogger_id", referencedColumnName="id", nullable=false)
+     *
+     * @Assert\NotNull(message="Le blogger est obligatoire !!!")
+     * @Assert\Type(type="INSSET\BlogBundle\Entity\Blogger")
+     * @Assert\Valid()
+     */
+    private $blogger;
 
     /**
      * Article constructor.
@@ -209,5 +219,29 @@ class Article
     public function getComments()
     {
         return $this->comments;
+    }
+
+    /**
+     * Set blogger
+     *
+     * @param \INSSET\BlogBundle\Entity\Blogger $blogger
+     *
+     * @return Article
+     */
+    public function setBlogger(\INSSET\BlogBundle\Entity\Blogger $blogger)
+    {
+        $this->blogger = $blogger;
+
+        return $this;
+    }
+
+    /**
+     * Get blogger
+     *
+     * @return \INSSET\BlogBundle\Entity\Blogger
+     */
+    public function getBlogger()
+    {
+        return $this->blogger;
     }
 }

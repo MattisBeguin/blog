@@ -10,5 +10,17 @@ namespace INSSET\BlogBundle\Repository;
  */
 class CommentRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findAllTextsDatesArticles($blogger)
+    {
+        $queryBuilder = $this->createQueryBuilder('c');
+        $queryBuilder->select('c');
+        $queryBuilder->innerJoin('c.article', 'a', 'WITH', 'a.published = false');
+        $queryBuilder->innerJoin('a.blogger', 'b', 'WITH', 'b.id = :id');
+        $queryBuilder->setParameter('id', $blogger->getId());
+        $queryBuilder->addOrderBy('c.date', 'DESC');
+        $query = $queryBuilder->getQuery();
+        $results = $query->getResult();
 
+        return $results;
+    }
 }

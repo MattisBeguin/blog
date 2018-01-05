@@ -1,6 +1,6 @@
 {% extends 'INSSETBlogBundle::layout.html.twig' %}
 
-{% block page_title %}{{ parent() }} - Index {% endblock %}
+{% block page_title %}{{ parent() }} - Index{% endblock %}
 
 {% block styles %}
     {{ parent() }}
@@ -85,12 +85,6 @@
         width: 75%;
         margin: auto;
     }
-
-    aside > p > a
-    {
-        text-decoration: none;
-    }
-
 {% endblock %}
 
 {% block section %}
@@ -100,7 +94,7 @@
             {% if article is not null %}
                 <h3 id="article_title" class="text-center">{{ article.title }}</h3>
                 <p id="article_body">{{ article.body }}</p>
-                <p id="article_date" class="text-right"r>écrit à {{ article.date|date('H:i:s \\l\\e d/m/Y') }}</p>
+                <p id="article_date" class="text-right"r>écrit par {{ article.blogger.username ~ ' à ' ~ article.date|date('H:i:s \\l\\e d/m/Y') }}</p>
             {% else %}
                 <p id="article_body">Il n'y a pas encore d'article...</p>
             {% endif %}
@@ -132,13 +126,15 @@
 {% endblock %}
 {% block aside_right %}
     <div class="col-xs-4 col-sm-4 col-md-3 col-lg-3">
+        <h2>Liste des articles</h2>
         {% if article is not null %}
-            <h2>Liste des articles</h2>
             {% for articleTitle in articlesTitles %}
                 <aside class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><p><a href="{{ path('insset_blog_front_default_index', { 'id': articleTitle.id }) }}">{{ articleTitle.title }}</a></p></aside>
             {% else %}
-                <aside class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><p>Il n'y a pas d'autre article...</p></aside>
+                <aside class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><p>Il n'y a pas encore d'autre article...</p></aside>
             {% endfor %}
+        {% else %}
+            <aside class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><p>Il n'y a pas encore d'autre article...</p></aside>
         {% endif %}
     </div>
 {% endblock %}

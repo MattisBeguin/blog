@@ -1,0 +1,14 @@
+{% extends 'INSSETBlogBundle::layout.html.twig' %}
+
+{% block header %}
+    <nav class="navbar-inverse">
+        <div class="container-fluid">
+            <ul class="nav navbar-nav">
+                <li><a href="{{ path('insset_blog_back_default_index') }}">Accueil</a></li>
+                <li><a href="{{ path('insset_blog_back_article_add') }}">Ajouter un article</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    {{ parent() }}
+{% endblock %}

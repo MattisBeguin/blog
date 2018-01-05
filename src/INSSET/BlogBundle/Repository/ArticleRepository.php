@@ -32,4 +32,18 @@ class ArticleRepository extends \Doctrine\ORM\EntityRepository
 
         return $results;
     }
+
+    public function findAllTitlesDates($blogger)
+    {
+        $queryBuilder = $this->createQueryBuilder('a');
+        $queryBuilder->select('a');
+        $queryBuilder->innerJoin('a.blogger', 'b', 'WITH', 'b.id = :id');
+        $queryBuilder->where('a.published = false');
+        $queryBuilder->setParameter('id', $blogger->getId());
+        $queryBuilder->addOrderBy('a.date', 'DESC');
+        $query = $queryBuilder->getQuery();
+        $results = $query->getResult();
+
+        return $results;
+    }
 }
