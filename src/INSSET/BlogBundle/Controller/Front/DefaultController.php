@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use INSSET\BlogBundle\Entity\Comment;
 use INSSET\BlogBundle\Form\CommentType;
+
 use INSSET\BlogBundle\Entity\Article;
 
 class DefaultController extends Controller
@@ -25,11 +26,11 @@ class DefaultController extends Controller
 
         if ($articleNumber > 0){
             if ($id == 0){
-                $article = $em->getRepository('INSSETBlogBundle:Article')->findOneBy(array('published' => false), array('id' => 'DESC'));
+                $article = $em->getRepository('INSSETBlogBundle:Article')->findOneBy(array('published' => true), array('date' => 'DESC'));
             }
 
             else{
-                $article = $em->getRepository('INSSETBlogBundle:Article')->findOneBy(array('id' => $id, 'published' => false));
+                $article = $em->getRepository('INSSETBlogBundle:Article')->findOneBy(array('id' => $id, 'published' => true));
             }
 
             if ($article === null){

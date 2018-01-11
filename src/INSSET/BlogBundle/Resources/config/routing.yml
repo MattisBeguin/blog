@@ -27,3 +27,8 @@ insset_blog_back_article_add:
     path: /admin/article/add
     defaults:
         _controller: INSSETBlogBundle:Back\Article:add
+
+insset_blog_back_article_publish:
+    path: /admin/article/publish
+    defaults:
+        _controller: INSSETBlogBundle:Back\Article:publish

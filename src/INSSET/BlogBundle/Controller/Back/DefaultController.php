@@ -15,11 +15,11 @@ class DefaultController extends Controller
     public function indexAction()
     {
         if($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')){
-            $em = $this->getDoctrine()->getManager();
-
             $blogger = $this->getUser();
 
-            $articles = $em->getRepository('INSSETBlogBundle:Article')->findAllTitlesDates($blogger);
+            $em = $this->getDoctrine()->getManager();
+
+            $articles = $em->getRepository('INSSETBlogBundle:Article')->findAllByBlogger($blogger, true);
 
             $comments = $em->getRepository('INSSETBlogBundle:Comment')->findAllTextsDatesArticles($blogger);
 

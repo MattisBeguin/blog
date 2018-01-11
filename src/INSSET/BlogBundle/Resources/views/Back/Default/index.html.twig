@@ -1,5 +1,7 @@
 {% extends 'INSSETBlogBundle:Back:layout.html.twig' %}
 
+{% block page_title %}{{ parent() }} - Index{% endblock %}
+
 {% block styles %}
     {{ parent() }}
 
@@ -57,13 +59,11 @@
     }
 {% endblock %}
 
-{% block page_title %}{{ parent() }} - Index{% endblock %}
-
 {% block aside_left %}
     <div class="col-xs-4 col-sm-4 col-md-3 col-lg-3">
         <h2>Liste de mes articles publiés</h2>
         {% for article in articles %}
-            <aside class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><p><a href="#">{{ article.title ~ ' : écrit à ' ~ article.date|date('H:i:s \\l\\e d/m/Y') }}</a></p></aside>
+            <aside class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><p><a href="#">{{ article.title ~ ' : publié à ' ~ article.date|date('H:i:s \\l\\e d/m/Y') }}</a></p></aside>
         {% else %}
             <aside class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><p>Il n'y a pas d'article publié...</p></aside>
         {% endfor %}

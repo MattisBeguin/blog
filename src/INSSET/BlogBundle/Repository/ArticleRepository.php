@@ -14,6 +14,7 @@ class ArticleRepository extends \Doctrine\ORM\EntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('a');
         $queryBuilder->select('COUNT(a)');
+        $queryBuilder->where('a.published = true');
         $query = $queryBuilder->getQuery();
         $result = $query->getSingleScalarResult();
 
@@ -25,22 +26,32 @@ class ArticleRepository extends \Doctrine\ORM\EntityRepository
         $queryBuilder = $this->createQueryBuilder('a');
         $queryBuilder->select('a.id, a.title');
         $queryBuilder->where('a.id != :id');
+        $queryBuilder->andWhere('a.published = true');
         $queryBuilder->setParameter('id', $id);
-        $queryBuilder->addOrderBy('a.id', 'DESC');
+        $queryBuilder->addOrderBy('a.date', 'DESC');
         $query = $queryBuilder->getQuery();
         $results = $query->getResult();
 
         return $results;
     }
 
-    public function findAllTitlesDates($blogger)
+    public function findAllByBlogger($blogger, $published)
     {
         $queryBuilder = $this->createQueryBuilder('a');
         $queryBuilder->select('a');
         $queryBuilder->innerJoin('a.blogger', 'b', 'WITH', 'b.id = :id');
-        $queryBuilder->where('a.published = false');
-        $queryBuilder->setParameter('id', $blogger->getId());
-        $queryBuilder->addOrderBy('a.date', 'DESC');
+
+        if (is_null($published)){
+            $queryBuilder->setParameter('id', $blogger->getId());
+            $queryBuilder->addOrderBy('a.id', 'DESC');
+        }
+
+        else{
+            $queryBuilder->where('a.published = :published');
+            $queryBuilder->setParameters(array('id' => $blogger->getId(), 'published' => $published));
+            $queryBuilder->addOrderBy('a.date', 'DESC');
+        }
+
         $query = $queryBuilder->getQuery();
         $results = $query->getResult();
 

@@ -14,7 +14,7 @@ class CommentRepository extends \Doctrine\ORM\EntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('c');
         $queryBuilder->select('c');
-        $queryBuilder->innerJoin('c.article', 'a', 'WITH', 'a.published = false');
+        $queryBuilder->innerJoin('c.article', 'a', 'WITH', 'a.published = true');
         $queryBuilder->innerJoin('a.blogger', 'b', 'WITH', 'b.id = :id');
         $queryBuilder->setParameter('id', $blogger->getId());
         $queryBuilder->addOrderBy('c.date', 'DESC');

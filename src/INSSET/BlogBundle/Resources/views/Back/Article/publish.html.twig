@@ -1,0 +1,98 @@
+{% extends 'INSSETBlogBundle:Back:layout.html.twig' %}
+
+{% block page_title %}{{ parent() }} - Publier{% endblock %}
+
+{% block styles %}
+    {{ parent() }}
+
+    #articles
+    {
+        width: 75%;
+        margin: auto;
+    }
+
+    #articles .article
+    {
+        margin-top: 15px;
+        margin-bottom: 15px;
+        border-radius: 15px;
+        background-color: #ecf0f1;
+    }
+
+    #articles .article .article_title
+    {
+        padding-top: 15px;
+        padding-right: 15px;
+        padding-bottom: 15px;
+        padding-left: 15px;
+        margin-bottom: 0px;
+    }
+{% endblock %}
+
+{% block section %}
+    <section class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <h2 class="text-center">Liste de mes articles publiés ou pas</h2>
+        <article id="articles">
+            {% for article in articles %}
+                <div data-id="{{ article.id }}" class="form-check article">
+                    <p class="article_title">
+                        <input type="checkbox" id="defaultCheck1" class="form-check-input" {% if article.published == true %} checked="checked" {% endif %} >
+                        <label class="form-check-label" for="defaultCheck1">{{ article.title }}</label>
+                    </p>
+                </div>
+            {% else %}
+                <div class="article">
+                    <p class="article_title">Il n'y a pas encore d'article...</p>
+                </div>
+            {% endfor %}
+        </article>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            var url;
+            var articleTag;
+            var checkboxArticleTag;
+            var id;
+            var published;
+
+            function ajaxCall(url, checkboxArticleTag, id, published){
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: {id: id, published: published},
+                    cache: false,
+                    success: function(response){
+                        response = jQuery.parseJSON(response);
+
+                        if (response.status === 'Okay'){
+                            checkboxArticleTag.prop('checked', response.data);
+                        }
+
+                        else{
+                            console.error('Erreur !!!');
+                        }
+                    },
+                    error: function(request){
+                        console.error('Erreur : ' + request.responseText);
+                    }
+                })
+            }
+
+            $('input[type="checkbox"]').change(function(){
+                url = "{{ path('insset_blog_back_article_publish') }}";
+                articleTag = $(this).closest('div');
+                id = articleTag.data('id');
+                checkboxArticleTag = $(this);
+                published = $(this).prop('checked');
+                console.log(published);
+                ajaxCall(url, checkboxArticleTag, id, published);
+            });
+        });
+    </script>
+{% endblock %}
