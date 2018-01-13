@@ -28,7 +28,7 @@ class ArticleRepository extends \Doctrine\ORM\EntityRepository
         $queryBuilder->where('a.id != :id');
         $queryBuilder->andWhere('a.published = true');
         $queryBuilder->setParameter('id', $id);
-        $queryBuilder->addOrderBy('a.date', 'DESC');
+        $queryBuilder->orderBy('a.date', 'DESC');
         $query = $queryBuilder->getQuery();
         $results = $query->getResult();
 
@@ -43,17 +43,17 @@ class ArticleRepository extends \Doctrine\ORM\EntityRepository
 
         if (is_null($published)){
             $queryBuilder->setParameter('id', $blogger->getId());
-            $queryBuilder->addOrderBy('a.id', 'DESC');
+            $queryBuilder->orderBy('a.id', 'DESC');
         }
 
         else{
             $queryBuilder->where('a.published = :published');
             $queryBuilder->setParameters(array('id' => $blogger->getId(), 'published' => $published));
-            $queryBuilder->addOrderBy('a.date', 'DESC');
+            $queryBuilder->orderBy('a.date', 'ASC');
         }
 
         $query = $queryBuilder->getQuery();
-        $results = $query->getResult();
+        $results = $query->getArrayResult();
 
         return $results;
     }

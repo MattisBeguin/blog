@@ -10,6 +10,7 @@ namespace INSSET\BlogBundle\Controller\Back;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use INSSET\BlogBundle\Entity\Article;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ArticleController extends Controller
@@ -48,7 +49,56 @@ class ArticleController extends Controller
 
             $articles = $em->getRepository('INSSETBlogBundle:Article')->findAllByBlogger($blogger, null);
 
-            return $this->render('INSSETBlogBundle:Back/Article:publish.html.twig', array('blogger' => $blogger, 'articles'  => $articles));
+            return $this->render('INSSETBlogBundle:Back/Article:publish.html.twig', array('articles'  => $articles));
+        }
+
+        else{
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+    }
+
+    public function addAction(Request $request)
+    {
+        if ($request->isMethod('POST')){
+            if ($request->isXmlHttpRequest()){
+                $id = $request->request->get('id');
+                $title = $request->request->get('title');
+                $body = $request->request->get('body');
+
+                if ((!(empty($id))) && (!(empty($title))) && (!(empty($body)))){
+                    if (strlen((string) $title) <= 255){
+                        $em = $this->getDoctrine()->getManager();
+
+                        $article = $em->getRepository('INSSETBlogBundle:Article')->findOneBy(array('id' => (integer) $id));
+
+                        if ($article !== null){
+                            $article->setTitle((string) $title);
+                            $article->setBody((string) $body);
+                            $em->flush();
+
+                            return new JsonResponse(json_encode(array('status' => 'Okay', 'dataTitle' => $article->getTitle(), 'dataBody' => $article->getBody()), JSON_UNESCAPED_UNICODE));
+                        }
+                    }
+                }
+            }
+
+            return new JsonResponse(json_encode(array('status' => 'Not Okay'), JSON_UNESCAPED_UNICODE));
+        }
+
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')){
+            $blogger = $this->getUser();
+
+            $em = $this->getDoctrine()->getManager();
+
+            $article = new Article();
+
+            $article->setBlogger($blogger);
+
+            $em->persist($article);
+
+            $em->flush();
+
+            return $this->render('INSSETBlogBundle:Back/Article:add.html.twig', array('article'  => $article));
         }
 
         else{

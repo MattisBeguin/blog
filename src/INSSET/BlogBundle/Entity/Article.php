@@ -27,9 +27,6 @@ class Article
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255)
-     *
-     * @Assert\NotBlank(message="Le titre est obligatoire !!!")
-     * @Assert\Length(max="255", maxMessage="Le titre ne doit pas comprendre plus de {{ limit }} caractères !!!")
      */
     private $title;
 
@@ -37,8 +34,6 @@ class Article
      * @var string
      *
      * @ORM\Column(name="body", type="text")
-     *
-     * @Assert\NotBlank(message="Le corps est obligatoire !!!")
      */
     private $body;
 
@@ -76,6 +71,8 @@ class Article
      */
     public function __construct()
     {
+        $this->setTitle('Ceci est un titre');
+        $this->setBody('Ceci est un corps');
         $this->published = false;
         $this->date = null;
         $this->comments = new ArrayCollection();

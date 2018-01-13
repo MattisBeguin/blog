@@ -90,7 +90,6 @@
                 id = articleTag.data('id');
                 checkboxArticleTag = $(this);
                 published = $(this).prop('checked');
-                console.log(published);
                 ajaxCall(url, checkboxArticleTag, id, published);
             });
         });

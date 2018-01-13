@@ -14,8 +14,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use INSSET\BlogBundle\Entity\Comment;
 use INSSET\BlogBundle\Form\CommentType;
 
-use INSSET\BlogBundle\Entity\Article;
-
 class DefaultController extends Controller
 {
     public function indexAction($id, Request $request)

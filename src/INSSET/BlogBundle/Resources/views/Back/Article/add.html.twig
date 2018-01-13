@@ -1,0 +1,151 @@
+{% extends 'INSSETBlogBundle:Back:layout.html.twig' %}
+
+{% block page_title %}{{ parent() }} - Ajouter{% endblock %}
+
+{% block styles %}
+    {{ parent() }}
+
+    #article
+    {
+        width: 75%;
+        margin: auto;
+        border-radius: 15px;
+        background-color: #ecf0f1;
+    }
+
+    #article > #article_title
+    {
+        padding-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    #article > #article_body
+    {
+        padding-bottom: 15px;
+        margin-left: 15px;
+        margin-top: 15px;
+        margin-right: 15px;
+    }
+{% endblock %}
+
+{% block section %}
+    <section class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <article id="article" data-id="{{ article.id }}">
+            {% if article is not null %}
+                <h3 id="article_title" class="text-center" contenteditable="false" data-maxLength="255">{{ article.title }}</h3>
+                <p id="article_body" contenteditable="false">{{ article.body }}</p>
+            {% else %}
+                <p id="article_body">Erreur lors de la création de l'article...</p>
+            {% endif %}
+        </article>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            var interval;
+            var url = "{{ path('insset_blog_back_article_add') }}";
+            var articleTag = $('#article');
+            var id = articleTag.data('id');;
+            var title;
+            var body;
+
+            function placeCaretAtEnd(el){
+                el.focus();
+                if (typeof window.getSelection != "undefined"
+                    && typeof document.createRange != "undefined"){
+                    var range = document.createRange();
+                    range.selectNodeContents(el);
+                    range.collapse(false);
+                    var sel = window.getSelection();
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                } else if (typeof document.body.createTextRange != "undefined"){
+                    var textRange = document.body.createTextRange();
+                    textRange.moveToElementText(el);
+                    textRange.collapse(false);
+                    textRange.select();
+                }
+            }
+
+            $('#article h3').on('keydown paste', function(event) { //Prevent on paste as well
+
+                //You can add delete key event code as well over here for windows users.
+                if($(this).text().length === 20 && event.keyCode != 8) {
+                    event.preventDefault();
+                }
+            });
+
+            function updateArticleTag(dataTitle, dataBody){
+                console.log('Titre : ' + dataTitle);
+                $('#article_title').text(dataTitle);
+                console.log('Coprs : ' + dataBody);
+                $('#article_body').text(dataBody);
+
+                if (($('#article_title').is(':focus')) || ($('#article_body').is(':focus'))){
+                    console.log('A le focus');
+                    placeCaretAtEnd($(':focus').get(0));
+                }
+            }
+
+            function ajaxCall(url, synchronous, id, title, body, successCallbackFunction){
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    dataType: 'JSON',
+                    async: synchronous,
+                    data: {id: id, title: title, body: body},
+                    cache: false,
+                    success: function(response){
+                        response = jQuery.parseJSON(response);
+
+                        if (response.status === 'Okay'){
+                            console.log('Appel de la fonction  : updateArticleTag');
+                            successCallbackFunction(response.dataTitle, response.dataBody);
+                        }
+
+                        else{
+                            console.error('Erreur !!!');
+                        }
+                    },
+                    error: function(request){
+                        console.error('Erreur : ' + request.responseText);
+                    }
+                })
+            }
+
+            function getDataAndCallAjaxCall(synchronous){
+                title = $('#article_title').text();
+                body = $('#article_body').text();
+
+                if ((title.length > 0) && (body.length > 0)){
+                    ajaxCall(url, synchronous, id, title, body, updateArticleTag);
+                }
+            }
+
+            $(window).on('unload', getDataAndCallAjaxCall(false));
+
+            $('#article h3, #article p').dblclick(function(){
+                $(this).prop('contenteditable', 'true');
+                $(this).focus();
+                console.log('Contenteditable = true');
+
+                interval = window.setInterval(function(){
+                    console.log("Démarrer interval")
+                    getDataAndCallAjaxCall(true);
+                }, 60000);
+            });
+
+            $('#article h3, #article p').blur(function(){
+                $(this).prop('contenteditable', 'false');
+                console.log('Contenteditable = false');
+
+                clearInterval(interval);
+                getDataAndCallAjaxCall(true);
+            });
+        });
+    </script>
+{% endblock %}
