@@ -53,7 +53,7 @@ class ArticleRepository extends \Doctrine\ORM\EntityRepository
         }
 
         $query = $queryBuilder->getQuery();
-        $results = $query->getArrayResult();
+        $results = $query->getResult();
 
         return $results;
     }
