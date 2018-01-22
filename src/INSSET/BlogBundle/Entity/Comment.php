@@ -44,7 +44,6 @@ class Comment
      *
      * @Assert\NotNull(message="L'article est obligatoire !!!")
      * @Assert\Type(type="INSSET\BlogBundle\Entity\Article")
-     * @Assert\Valid()
      */
     private $article;
 

@@ -3,7 +3,6 @@
 namespace INSSET\BlogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -59,10 +58,6 @@ class Article
     /**
      * @ORM\ManyToOne(targetEntity="INSSET\BlogBundle\Entity\Blogger", inversedBy="articles")
      * @ORM\JoinColumn(name="blogger_id", referencedColumnName="id", nullable=false)
-     *
-     * @Assert\NotNull(message="Le blogger est obligatoire !!!")
-     * @Assert\Type(type="INSSET\BlogBundle\Entity\Blogger")
-     * @Assert\Valid()
      */
     private $blogger;
 
@@ -153,7 +148,7 @@ class Article
     /**
      * Get published
      *
-     * @return bool
+     * @return boolean
      */
     public function getPublished()
     {

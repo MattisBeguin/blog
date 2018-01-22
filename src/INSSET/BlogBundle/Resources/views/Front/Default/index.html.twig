@@ -2,139 +2,61 @@
 
 {% block page_title %}{{ parent() }} - Index{% endblock %}
 
-{% block styles %}
+{% block stylesheets %}
     {{ parent() }}
-
-    #article
-    {
-        background-color: #bdc3c7;
-        border-radius: 15px;
-    }
-
-    #article > #article_title
-    {
-        padding-top: 20px;
-        margin-bottom: 20px;
-    }
-
-    #article > #article_body
-    {
-        margin-left: 15px;
-        margin-top: 15px;
-        margin-right: 15px;
-        margin-bottom: 15px;
-    }
-
-    #article > #article_date
-    {
-        padding-right: 15px;
-        padding-bottom: 15px;
-        margin-top: 15px;
-        margin-bottom: 15px;
-    }
-
-    #comments > .comment
-    {
-        margin-top: 15px;
-        margin-bottom: 15px;
-        border-radius: 15px;
-        background-color: #ecf0f1;
-    }
-
-    .comment > .comment_text
-    {
-        padding-top: 15px;
-        padding-right: 15px;
-        padding-bottom: 15px;
-        padding-left: 15px;
-        margin-bottom: 0px;
-    }
-
-    .comment > .comment_date
-    {
-        padding-right: 15px;
-        padding-bottom: 15px;
-        margin-top: 15px;
-        margin-bottom: 15px;
-    }
-
-    #form
-    {
-        border-radius: 15px;
-        border: none;
-        background-color: #ecf0f1;
-    }
-
-    #form textarea
-    {
-        min-height: 100px;
-        overflow: auto;
-        outline: none;
-        border-radius: 5px;
-        border: none;
-        -webkit-box-shadow: none;
-    }
-
-    #form .form-group:nth-child(3)
-    {
-        margin-bottom: 0;
-    }
-
-    #article, #comments, #form
-    {
-        width: 75%;
-        margin: auto;
-    }
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/inssetblog/front/default/css/main.css') }}"/>
 {% endblock %}
 
-{% block section %}
-    <section class="col-xs-8 col-sm-8 col-md-9 col-lg-9">
-        <h2 class="text-center">Dernier article</h2>
-        <article id="article">
-            {% if article is not null %}
-                <h3 id="article_title" class="text-center">{{ article.title }}</h3>
-                <p id="article_body">{{ article.body }}</p>
-                <p id="article_date" class="text-right">publié par {{ article.blogger.username ~ ' à ' ~ article.date|date('H:i:s \\l\\e d/m/Y') }}</p>
-            {% else %}
-                <p id="article_body">Il n'y a pas encore d'article...</p>
-            {% endif %}
+{% block sections %}
+    <section id="article_comments" class="col-xs-8 col-sm-8 col-md-9 col-lg-9">
+    <h2 class="display-2 text-center">Dernier article</h2>
+    {% if article is not null %}
+        <article id="article" class="well">
+            <h3 id="article_title" class="display-3 text-center">{{ article.title }}</h3>
+            <p id="article_body">{{ article.body }}</p>
+            <p id="article_date" class="text-right">publié le {{ article.date|date('d/m/Y \\à H:i:s') ~ ' par ' ~ article.blogger.username }}</p>
         </article>
-        {% if article is not null %}
-            <h2 class="text-center">Liste des commentaires</h2>
-            <article id="comments">
-                {% for comment in comments %}
-                    <div class="comment">
-                        <p class="comment_text">{{ comment.text }}</p>
-                        <p class="text-right comment_date">écrit à {{ comment.date|date('H:i:s \\l\\e d/m/Y') }}</p>
-                    </div>
-                {% else %}
-                    <div class="comment">
-                        <p class="comment_text">Il n'y a pas encore de commentaire...</p>
-                    </div>
-                {% endfor %}
-            </article>
-            <h2 class="text-center">Écrire un commentaire</h2>
-            {% if form is not null %}
-                <div id="form" class="well text-center">
-                    {{ form_start(form, { 'attr': { 'novalidate': 'novalidate' }}) }}
-                        {{ form_widget(form) }}
-                    {{ form_end(form) }}
-                </div>
-            {% endif %}
-        {% endif %}
+        <section id="comments">
+            <h2 class="display-2 text-center">Liste des commentaires</h2>
+            {% for comment in comments %}
+                <article class="comment well">
+                    <p class="comment_text">{{ comment.text }}</p>
+                    <p class="comment_date text-right">écrit le {{ comment.date|date('d/m/Y \\à H:i:s') }}</p>
+                </article>
+            {% else %}
+                <article class="comment well">
+                    <p class="comment_text">Il n'y a pas encore de commentaire...</p>
+                    <p class="comment_date text-right">écrit le {{ 'now'|date('d/m/Y \\à H:i:s') }}</p>
+                </article>
+            {% endfor %}
+            <section id="form">
+                <h2 class="display-2 text-center">Écrire un commentaire</h2>
+                {% if commentsForm is not null %}
+                    <article class="well">
+                        {{ form_start(commentsForm, { 'attr': { 'novalidate': 'novalidate' }}) }}
+                            {{ form_widget(commentsForm) }}
+                        {{ form_end(commentsForm) }}
+                    </article>
+                {% endif %}
+            </section>
+        </section>
+    {% else %}
+        <article id="article" class="well">
+            <p id="article_body">Il n'y a pas encore d'article...</p>
+        </article>
+    {% endif %}
     </section>
 {% endblock %}
+
 {% block aside_right %}
-    <div class="col-xs-4 col-sm-4 col-md-3 col-lg-3">
-        <h2>Liste des articles</h2>
-        {% if article is not null %}
+    {% if article is not null %}
+        <div id="others_articles" class="col-xs-4 col-sm-4 col-md-3 col-lg-3">
+            <h2 class="display-2">Liste des articles</h2>
             {% for articleTitle in articlesTitles %}
                 <aside class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><p><a href="{{ path('insset_blog_front_default_index', { 'id': articleTitle.id }) }}">{{ articleTitle.title }}</a></p></aside>
             {% else %}
                 <aside class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><p>Il n'y a pas encore d'autre article...</p></aside>
             {% endfor %}
-        {% else %}
-            <aside class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><p>Il n'y a pas encore d'autre article...</p></aside>
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
 {% endblock %}

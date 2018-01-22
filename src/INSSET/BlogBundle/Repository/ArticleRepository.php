@@ -10,7 +10,7 @@ namespace INSSET\BlogBundle\Repository;
  */
 class ArticleRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function getNumberEntities()
+    public function getTuplesNumber()
     {
         $queryBuilder = $this->createQueryBuilder('a');
         $queryBuilder->select('COUNT(a)');
@@ -35,20 +35,20 @@ class ArticleRepository extends \Doctrine\ORM\EntityRepository
         return $results;
     }
 
-    public function findAllByBlogger($blogger, $published)
+    public function findAllByBlogger($id, $published)
     {
         $queryBuilder = $this->createQueryBuilder('a');
-        $queryBuilder->select('a');
+        $queryBuilder->select('a.id, a.title, a.published, a.date');
         $queryBuilder->innerJoin('a.blogger', 'b', 'WITH', 'b.id = :id');
 
         if (is_null($published)){
-            $queryBuilder->setParameter('id', $blogger->getId());
+            $queryBuilder->setParameter('id', $id);
             $queryBuilder->orderBy('a.id', 'DESC');
         }
 
         else{
             $queryBuilder->where('a.published = :published');
-            $queryBuilder->setParameters(array('id' => $blogger->getId(), 'published' => $published));
+            $queryBuilder->setParameters(array('id' => $id, 'published' => $published));
             $queryBuilder->orderBy('a.date', 'ASC');
         }
 

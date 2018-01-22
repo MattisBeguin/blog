@@ -11,24 +11,30 @@ insset_blog_back_default_index:
     defaults:
         _controller: INSSETBlogBundle:Back\Default:index
 
-insset_blog_back_comment_edit:
-    path: /comment/edit/
+insset_blog_back_comment_ajax_edit:
+    path: /comment/ajax/edit/
     defaults:
-        _controller: INSSETBlogBundle:Back\Comment:edit
+        _controller: INSSETBlogBundle:Back\Comment:ajaxEdit
     methods: [POST]
 
-insset_blog_back_comment_delete:
-    path: /comment/delete/
+insset_blog_back_comment_ajax_delete:
+    path: /comment/ajax/delete/
     defaults:
-        _controller: INSSETBlogBundle:Back\Comment:delete
+        _controller: INSSETBlogBundle:Back\Comment:ajaxDelete
     methods: [POST]
 
 insset_blog_back_article_add:
-    path: /admin/article/add
+    path: /admin/article/add/
     defaults:
         _controller: INSSETBlogBundle:Back\Article:add
 
 insset_blog_back_article_publish:
-    path: /admin/article/publish
+    path: /admin/article/publish/
     defaults:
         _controller: INSSETBlogBundle:Back\Article:publish
+
+insset_blog_back_article_ajax_publish:
+    path: /article/ajax/publish/
+    defaults:
+        _controller: INSSETBlogBundle:Back\Article:ajaxPublish
+    methods: [POST]

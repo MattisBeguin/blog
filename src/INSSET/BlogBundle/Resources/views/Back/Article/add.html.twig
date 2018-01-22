@@ -28,7 +28,7 @@
     }
 {% endblock %}
 
-{% block section %}
+{% block sections %}
     <section class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <article id="article" data-id="{{ article.id }}">
             {% if article is not null %}
@@ -74,7 +74,7 @@
             $('#article h3').on('keydown paste', function(event) { //Prevent on paste as well
 
                 //You can add delete key event code as well over here for windows users.
-                if($(this).text().length === 20 && event.keyCode != 8) {
+                if($(this).text().length === 255 && event.keyCode != 8) {
                     event.preventDefault();
                 }
             });

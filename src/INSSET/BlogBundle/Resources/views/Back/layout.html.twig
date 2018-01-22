@@ -5,16 +5,18 @@
 {% block header %}
     <nav class="navbar-inverse">
         <div class="container-fluid">
-            <ul class="nav navbar-nav">
-                <li><a href="{{ path('insset_blog_back_default_index') }}">Accueil</a></li>
-                <li><a href="{{ path('insset_blog_back_article_add') }}">Ajouter un article</a></li>
-                <li><a href="{{ path('insset_blog_back_article_publish') }}">Publier un article</a></li>
-            </ul>
-            <div class="navbar-form navbar-right">
-                <a href="{{ path('fos_user_security_logout') }}"><button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-off"></span> Déconnexion</button></a>
+            <div class="navbar-header">
+                <a class="navbar-brand" href="{{ path('insset_blog_front_default_index') }}">Blog</a>
             </div>
+            <ul class="nav navbar-nav">
+                <li {% block link_default_index %}{% endblock %}><a href="{{ path('insset_blog_back_default_index') }}">Accueil</a></li>
+                <li {% block link_article_add %}{% endblock %}><a href="{{ path('insset_blog_back_article_add') }}">Ajouter un article</a></li>
+                <li {% block link_article_publish %}{% endblock %}><a href="{{ path('insset_blog_back_article_publish') }}">Publier un article</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a class="text-danger" href="{{ path('fos_user_security_logout') }}"><span class="text-danger"><span class="glyphicon glyphicon-log-out"></span> Déconnexion</span></a></li>
+            </ul>
         </div>
     </nav>
-
     {{ parent() }}
 {% endblock %}

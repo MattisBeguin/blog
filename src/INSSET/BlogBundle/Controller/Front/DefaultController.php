@@ -10,7 +10,7 @@ namespace INSSET\BlogBundle\Controller\Front;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\Response;
 use INSSET\BlogBundle\Entity\Comment;
 use INSSET\BlogBundle\Form\CommentType;
 
@@ -20,30 +20,38 @@ class DefaultController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $articleNumber = $em->getRepository('INSSETBlogBundle:Article')->getNumberEntities();
+        $articleRepository = $em->getRepository('INSSETBlogBundle:Article');
 
-        if ($articleNumber > 0){
-            if ($id == 0){
-                $article = $em->getRepository('INSSETBlogBundle:Article')->findOneBy(array('published' => true), array('date' => 'DESC'));
+        $articlesNumber = $articleRepository->getTuplesNumber();
+
+        if ($articlesNumber > 0){
+
+            $id = (integer) $id;
+
+            if ($id === 0){
+                $article = $articleRepository->findOneBy(array('published' => true), array('date' => 'DESC'));
             }
 
             else{
-                $article = $em->getRepository('INSSETBlogBundle:Article')->findOneBy(array('id' => $id, 'published' => true));
+                $article = $articleRepository->findOneBy(array('id' => $id, 'published' => true));
             }
 
             if ($article === null){
-                throw new NotFoundHttpException('L\'article d\'id ' . $id . ' n\'a pas été publié ou il n\' existe pas.');
+                $response = new Response();
+                $response->setStatusCode(Response::HTTP_NOT_FOUND);
+                $response->setContent('ERREUR 404 : L\'article d\'id ' . $id . ' n\'a pas été publié ou il n\' existe pas encore...');
+
+                return $response;
             }
 
             $comment = new Comment();
 
-            $form = $this->createForm(CommentType::class, $comment, array('defaultArticle' => $article));
+            $commentsForm = $this->createForm(CommentType::class, $comment, array('defaultArticle' => $article));
 
             if ($request->isMethod('POST')){
-                $form->handleRequest($request);
+                $commentsForm->handleRequest($request);
 
-                if (($form->isSubmitted()) && ($form->isValid())){
-                    $em = $this->getDoctrine()->getManager();
+                if (($commentsForm->isSubmitted()) && ($commentsForm->isValid())){
                     $em->persist($comment);
                     $em->flush();
 
@@ -51,26 +59,30 @@ class DefaultController extends Controller
                 }
             }
 
-            $form = $form->createView();
+            $commentsForm = $commentsForm->createView();
 
-            $comments = $em->getRepository('INSSETBlogBundle:Comment')->findBy(array('article' => $article->getId()));
+            $comments = $em->getRepository('INSSETBlogBundle:Comment')->findBy(array('article' => $article));
 
-            $articlesTitles = $em->getRepository('INSSETBlogBundle:Article')->findAllOthersTitles($article->getId());
+            $articlesTitles = $articleRepository->findAllOthersTitles($article->getId());
         }
 
         else{
             if ($id == 0){
                 $article = null;
                 $comments = null;
-                $form = null;
+                $commentsForm = null;
                 $articlesTitles = null;
             }
 
             else{
-                throw new NotFoundHttpException('L\'article d\'id ' . $id . ' n\'a pas été publié ou il n\' existe pas.');
+                $response = new Response();
+                $response->setStatusCode(Response::HTTP_NOT_FOUND);
+                $response->setContent('ERREUR 404 : L\'article d\'id ' . $id . ' n\'a pas été publié ou il n\' existe pas encore...');
+
+                return $response;
             }
         }
 
-        return $this->render('INSSETBlogBundle:Front/Default:index.html.twig', array('article'  => $article, 'comments' => $comments, 'form' => $form, 'articlesTitles' => $articlesTitles));
+        return $this->render('INSSETBlogBundle:Front/Default:index.html.twig', array('article'  => $article, 'comments' => $comments, 'commentsForm' => $commentsForm, 'articlesTitles' => $articlesTitles));
     }
 }

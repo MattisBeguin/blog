@@ -2,152 +2,47 @@
 
 {% block page_title %}{{ parent() }} - Index{% endblock %}
 
-{% block styles %}
+{% block stylesheets %}
     {{ parent() }}
-
-    #comments
-    {
-        width: 75%;
-        margin: auto;
-    }
-
-    #comments > .comment
-    {
-        margin-top: 15px;
-        margin-bottom: 15px;
-        border-radius: 15px;
-        background-color: #ecf0f1;
-    }
-
-    .comment > .comment_text
-    {
-        padding-top: 15px;
-        padding-right: 15px;
-        padding-bottom: 7px;
-        padding-left: 15px;
-        margin-bottom: 0px;
-    }
-
-    .comment > .comment_date
-    {
-        max-width: 50%;
-        padding-right: 15px;
-        margin-top: 7px;
-        margin-bottom: 15px;
-        margin-left: 50%;
-    }
-
-    .comment button
-    {
-        width: 50%;
-    }
-
-    .comment .btn-primary
-    {
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-        border-bottom-left-radius: 15px;
-        border-top-left-radius: 0;
-    }
-
-    .comment .btn-danger
-    {
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 15px;
-        border-bottom-left-radius: 0;
-        border-top-left-radius: 0;
-    }
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/inssetblog/back/default/css/main.css') }}"/>
 {% endblock %}
 
+{% block link_default_index %}class="active"{% endblock %}
+
 {% block aside_left %}
-    <div class="col-xs-4 col-sm-4 col-md-3 col-lg-3">
-        <h2>Liste de mes articles publiés</h2>
+    <div id="articles" class="col-xs-4 col-sm-4 col-md-3 col-lg-3">
+        <h2 class="display-2">Liste de mes articles publiés</h2>
         {% for article in articles %}
-            <aside class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><p><a href="#">{{ article.title ~ ' : publié à ' ~ article.date|date('H:i:s \\l\\e d/m/Y') }}</a></p></aside>
+            <aside class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><p><a href="{{ path('insset_blog_front_default_index', { 'id': article.id }) }}">{{ article.title ~ ' - publié le ' ~ article.date|date('d/m/Y \\à H:i:s') }}</a></p></aside>
         {% else %}
-            <aside class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><p>Il n'y a pas d'article publié...</p></aside>
+            <aside class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><p>Il n'y a pas encore d'article publié...</p></aside>
         {% endfor %}
     </div>
 {% endblock %}
 
-{% block section %}
-    <section class="col-xs-8 col-sm-8 col-md-9 col-lg-9">
-        <h2 class="text-center">Liste des commentaires sur mes articles</h2>
-        <article id="comments">
-            {% for comment in comments %}
-                <div data-id="{{ comment.id }}" class="comment">
-                    <p contenteditable="true" class="comment_text">{{ comment.text }}</p>
-                    <p class="text-right comment_date">écrit sur l'article : {{ comment.article.title ~ ' à ' ~ comment.date|date('H:i:s \\l\\e d/m/Y') }}</p>
-                    <button type="button" class="btn btn-primary">Modifier</button><button type="button" class="btn btn-danger">Supprimer</button>
-                </div>
+{% block sections %}
+    <section id="comments" class="col-xs-8 col-sm-8 col-md-9 col-lg-9">
+        <h2 class="display-2 text-center">Liste des commentaires sur mes articles</h2>
+        {% for comment in comments %}
+            <article class="comment well" data-id="{{ comment.id }}">
+                <p class="comment_text">{{ comment.text }}</p>
+                <p class="comment_date text-right">rédigé sur l'article "{{ comment.title ~ '" le ' ~ comment.date|date('d/m/Y \\à H:i:s') }}</p>
+                <button type="button" class="btn btn-primary">Modifier</button><!--
+                --><button type="button" class="btn btn-danger">Supprimer</button>
+            </article>
             {% else %}
-                <div class="comment">
-                    <p class="comment_text">Il n'y a pas encore de commentaire...</p>
-                </div>
+                <article class="comment well">
+                    <p id="comment_text_alone">Il n'y a pas encore de commentaire sur mes articles...</p>
+                </article>
             {% endfor %}
-        </article>
     </section>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-
     <script type="text/javascript">
-        $(document).ready(function(){
-            var url;
-            var commentTag;
-            var id;
-            var text;
-
-            function ajaxCall(url, commentTag, id, text, successCallbackFunction){
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    dataType: 'JSON',
-                    data: {id: id, text: text},
-                    cache: false,
-                    success: function(response){
-                        response = jQuery.parseJSON(response);
-
-                        if(response.status === 'Okay'){
-                            successCallbackFunction(commentTag, response);
-                        }
-
-                        else{
-                            console.error('Erreur !!!');
-                        }
-                    },
-                    error: function(request){
-                        console.error('Erreur : ' + request.responseText);
-                    }
-                })
-            }
-
-            function updateCommentTag(commentTag, response){
-                commentTag.children('.comment_text').text(response.data);
-                commentTag.children('.btn-primary').blur();
-            }
-
-            function deleteCommentTag(commentTag, response){
-                commentTag.remove();
-            }
-
-            $('button').click(function(){
-                commentTag = $(this).closest('div');
-                id = commentTag.data('id');
-
-                if($(this).hasClass('btn-primary')){
-                    url = "{{ path('insset_blog_back_comment_edit') }}";
-                    text = commentTag.children('.comment_text').text();
-                    ajaxCall(url, commentTag, id, text, updateCommentTag);
-                }
-
-                else if($(this).hasClass('btn-danger')){
-                    url = "{{ path('insset_blog_back_comment_delete') }}";
-                    text = null;
-                    ajaxCall(url, commentTag, id, text, deleteCommentTag);
-                }
-            });
-        });
+        var updateCommentTagURL = '{{ path('insset_blog_back_comment_ajax_edit') }}';
+        var deleteCommentTagURL = '{{ path('insset_blog_back_comment_ajax_delete') }}';
     </script>
+    <script type="text/javascript" src="{{ asset('bundles/inssetblog/back/default/js/script.js') }}"></script>
 {% endblock %}

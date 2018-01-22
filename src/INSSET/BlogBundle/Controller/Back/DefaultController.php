@@ -14,16 +14,16 @@ class DefaultController extends Controller
 {
     public function indexAction()
     {
-        if($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')){
+        if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')){
             $blogger = $this->getUser();
 
             $em = $this->getDoctrine()->getManager();
 
-            $articles = $em->getRepository('INSSETBlogBundle:Article')->findAllByBlogger($blogger, true);
+            $articles = $em->getRepository('INSSETBlogBundle:Article')->findAllByBlogger($blogger->getId(), true);
 
-            $comments = $em->getRepository('INSSETBlogBundle:Comment')->findAllTextsDatesArticles($blogger);
+            $comments = $em->getRepository('INSSETBlogBundle:Comment')->findAllTextsDatesArticlesByBlogger($blogger->getId());
 
-            return $this->render('INSSETBlogBundle:Back/Default:index.html.twig', array('blogger' => $blogger, 'articles'  => $articles, 'comments' => $comments));
+            return $this->render('INSSETBlogBundle:Back/Default:index.html.twig', array('articles'  => $articles, 'comments' => $comments));
         }
 
         else{
