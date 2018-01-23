@@ -1,0 +1,115 @@
+.container-fluid > .row > #articles > h2
+{
+    margin-top: 15px;
+    margin-bottom: 30px;
+    hyphens: auto;
+}
+
+.container-fluid > .row > #articles > aside
+{
+    margin-bottom: 15px;
+}
+
+.container-fluid > .row > #articles > aside > p
+{
+    margin-bottom: 0;
+    hyphens: auto;
+}
+
+.container-fluid > .row > #comments > h2
+{
+    width: 75%;
+    margin-top: 15px;
+    margin-right: auto;
+    margin-bottom: 30px;
+    margin-left: auto;
+    hyphens: auto;
+}
+
+.container-fluid > .row > #comments > .comment
+{
+    width: 75%;
+    padding-top: 15px;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    margin-top: 30px;
+    margin-right: auto;
+    margin-left: auto;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    background-color: #ecf0f1;
+}
+
+.container-fluid > .row > #comments > .comment:not(:last-child)
+{
+    margin-bottom: 30px;
+}
+
+.container-fluid > .row > #comments > .comment:last-child
+{
+    margin-bottom: 15px;
+}
+
+.container-fluid > .row > #comments > .delete
+{
+    -webkit-transition: all 350ms ease-in;
+    -webkit-transform: scale(0.1);
+    -moz-transition: all 350ms ease-in;
+    -moz-transform: scale(0.1);
+    -ms-transition: all 350ms ease-in;
+    -ms-transform: scale(0.1);
+    transition: all 350ms ease-in;
+    transform: scale(0.1);
+}
+
+.container-fluid > .row > #comments > .comment > .comment_text
+{
+    margin-top: 15px;
+    margin-right: 30px;
+    margin-bottom: 15px;
+    margin-left: 30px;
+    hyphens: auto;
+}
+
+.container-fluid > .row > #comments > .comment > #comment_text_alone
+{
+    padding-top: 15px;
+    padding-right: 30px;
+    padding-bottom: 30px;
+    padding-left: 30px;
+}
+
+.container-fluid > .row > #comments > .comment > .comment_date
+{
+    width: 50%;
+    margin-top: 15px;
+    margin-right: 30px;
+    margin-bottom: 30px;
+    margin-left: calc(50% - 30px);
+    hyphens: auto;
+}
+
+.container-fluid > .row > #comments > .comment > button
+{
+    width: 50%;
+}
+
+.container-fluid > .row > #comments > .comment > .btn-primary
+{
+    border: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 15px;
+    border-top-left-radius: 0;
+}
+
+.container-fluid > .row > #comments > .comment > .btn-danger
+{
+    border: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+}
